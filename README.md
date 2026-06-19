@@ -53,104 +53,108 @@ Implementar un microservicio robusto que:
 ---
 
 ## Arquitectura del Sistema
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│ │
-│ CLIENTE (Postman / Frontend) │
-│ │
-└─────────────────────────────────────────────────────────────────────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│ │
-│ MICROSERVICIO ANDESFIN │
-│ │
-│ ┌───────────────────────────────────────────────────────────────────────────────┐ │
-│ │ │ │
-│ │ ┌──────────────┐ ┌──────────────┐ ┌──────────────────────────────┐ │ │
-│ │ │ USUARIO │ │ PRODUCTO │ │ SIMULACION │ │ │
-│ │ │ CONTROLLER │ │ CONTROLLER │ │ CONTROLLER │ │ │
-│ │ │ │ │ │ │ │ │ │
-│ │ │ GET / │ │ GET / │ │ POST / │ │ │
-│ │ │ usuarios │ │ productos │ │ GET /{usuarioId} │ │ │
-│ │ └──────────────┘ └──────────────┘ └──────────────────────────────┘ │ │
-│ │ │ │ │ │ │
-│ │ ▼ ▼ ▼ │ │
-│ │ ┌──────────────┐ ┌──────────────┐ ┌──────────────────────────────┐ │ │
-│ │ │ USUARIO │ │ PRODUCTO │ │ SIMULACION │ │ │
-│ │ │ SERVICE │ │ SERVICE │ │ SERVICE │ │ │
-│ │ │ │ │ │ │ │ │ │
-│ │ │ CRUD │ │ CRUD │ │ - Optimizacion de inversion │ │ │
-│ │ │ Usuarios │ │ Productos │ │ - Algoritmo de mochila │ │ │
-│ │ │ │ │ │ │ - Persistencia │ │ │
-│ │ └──────────────┘ └──────────────┘ └──────────────────────────────┘ │ │
-│ │ │ │ │ │ │
-│ │ ▼ ▼ ▼ │ │
-│ │ ┌──────────────────────────────────────────────────────────────────────┐ │ │
-│ │ │ REPOSITORIOS (JPA) │ │ │
-│ │ │ │ │ │
-│ │ │ ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐ │ │ │
-│ │ │ │ UsuarioRepository │ │ProductoRepository│ │SimulacionRepository│ │ │
-│ │ │ └──────────────────┘ └──────────────────┘ └──────────────────┘ │ │ │
-│ │ └──────────────────────────────────────────────────────────────────────┘ │ │
-│ │ │ │
-│ └───────────────────────────────────────────────────────────────────────────────┘ │
-│ │
-└─────────────────────────────────────────────────────────────────────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│ │
-│ BASE DE DATOS PostgreSQL │
-│ │
-│ ┌──────────────────┐ ┌──────────────────┐ ┌────────────────────────────────┐ │
-│ │ USUARIOS │ │PRODUCTOS_ │ │ SIMULACIONES │ │
-│ │ │ │FINANCIEROS │ │ │ │
-│ │ - id (UUID) │ │ │ │ - id (UUID) │ │
-│ │ - nombre │ │ - id (UUID) │ │ - usuario_id (FK) │ │
-│ │ - email (unico) │ │ - nombre │ │ - fecha_simulacion │ │
-│ │ - capital_ │ │ - descripcion │ │ - capital_disponible │ │
-│ │ disponible │ │ - costo │ │ - ganancia_total │ │
-│ │ │ │ - porcentaje_ │ │ - costo_total │ │
-│ │ │ │ retorno │ │ - capital_restante │ │
-│ │ │ │ - activo │ │ - retorno_porcentaje │ │
-│ │ │ │ │ │ - productos_seleccionados_json│ │
-│ │ │ │ │ │ - mensaje │ │
-│ └──────────────────┘ └──────────────────┘ └────────────────────────────────┘ │
-│ │
-└─────────────────────────────────────────────────────────────────────────────────────┘
-
-text
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│                      CLIENTE (Postman / Frontend)                   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│                         MICROSERVICIO ANDESFIN                      │
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │                                                               │  │
+│  │    ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │  │
+│  │    │   USUARIO    │  │   PRODUCTO   │  │    SIMULACION    │  │  │
+│  │    │  CONTROLLER  │  │  CONTROLLER  │  │    CONTROLLER    │  │  │
+│  │    │              │  │              │  │                  │  │  │
+│  │    │  GET /       │  │  GET /       │  │  POST /          │  │  │
+│  │    │  usuarios    │  │  productos   │  │  GET /{usuarioId}│  │  │
+│  │    └──────────────┘  └──────────────┘  └──────────────────┘  │  │
+│  │            │                 │                   │            │  │
+│  │            ▼                 ▼                   ▼            │  │
+│  │    ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │  │
+│  │    │   USUARIO    │  │   PRODUCTO   │  │    SIMULACION    │  │  │
+│  │    │   SERVICE    │  │   SERVICE    │  │    SERVICE       │  │  │
+│  │    │              │  │              │  │                  │  │  │
+│  │    │  CRUD        │  │  CRUD        │  │  - Optimizacion  │  │  │
+│  │    │  Usuarios    │  │  Productos   │  │  - Algoritmo     │  │  │
+│  │    │              │  │              │  │    mochila       │  │  │
+│  │    │              │  │              │  │  - Persistencia  │  │  │
+│  │    └──────────────┘  └──────────────┘  └──────────────────┘  │  │
+│  │            │                 │                   │            │  │
+│  │            ▼                 ▼                   ▼            │  │
+│  │    ┌──────────────────────────────────────────────────────┐   │  │
+│  │    │                REPOSITORIOS (JPA)                   │   │  │
+│  │    │                                                      │   │  │
+│  │    │  ┌────────────────┐  ┌────────────────┐  ┌───────┐  │   │  │
+│  │    │  │UsuarioRepository│  │ProductoRepos- │  │Simula-│  │   │  │
+│  │    │  │                │  │itory          │  │cionRep│  │   │  │
+│  │    │  └────────────────┘  └────────────────┘  └───────┘  │   │  │
+│  │    └──────────────────────────────────────────────────────┘   │  │
+│  │                                                               │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│                       BASE DE DATOS PostgreSQL                      │
+│                                                                     │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  │
+│  │     USUARIOS     │  │  PRODUCTOS_      │  │   SIMULACIONES   │  │
+│  │                  │  │  FINANCIEROS     │  │                  │  │
+│  │  - id (UUID)     │  │                  │  │  - id (UUID)     │  │
+│  │  - nombre        │  │  - id (UUID)     │  │  - usuario_id    │  │
+│  │  - email (unico) │  │  - nombre        │  │    (FK)          │  │
+│  │  - capital_      │  │  - descripcion   │  │  - fecha_        │  │
+│  │    disponible    │  │  - costo         │  │    simulacion    │  │
+│  │                  │  │  - porcentaje_   │  │  - capital_      │  │
+│  │                  │  │    retorno       │  │    disponible    │  │
+│  │                  │  │  - activo        │  │  - ganancia_     │  │
+│  │                  │  │                  │  │    total         │  │
+│  │                  │  │                  │  │  - costo_total   │  │
+│  │                  │  │                  │  │  - capital_      │  │
+│  │                  │  │                  │  │    restante      │  │
+│  │                  │  │                  │  │  - retorno_      │  │
+│  │                  │  │                  │  │    porcentaje    │  │
+│  │                  │  │                  │  │  - productos_    │  │
+│  │                  │  │                  │  │    seleccionados │  │
+│  │                  │  │                  │  │    _json         │  │
+│  │                  │  │                  │  │  - mensaje       │  │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 
 ### Diagrama de Relaciones (ER)
-┌─────────────────┐ ┌─────────────────────────────────┐
-│ USUARIO │ │ SIMULACION │
-├─────────────────┤ ├─────────────────────────────────┤
-│ id (PK) │───┬──────│ id (PK) │
-│ nombre │ │ │ usuario_id (FK) │
-│ email (UK) │ │ │ fecha_simulacion │
-│ capital_ │ │ │ capital_disponible │
-│ disponible │ │ │ ganancia_total │
-└─────────────────┘ │ │ costo_total │
-│ │ capital_restante │
-│ │ retorno_porcentaje │
-│ │ productos_seleccionados_json │
-│ │ mensaje │
-│ └─────────────────────────────────┘
-│
-│
+┌─────────────────────┐          ┌─────────────────────────────────┐
+│       USUARIO       │          │          SIMULACION             │
+├─────────────────────┤          ├─────────────────────────────────┤
+│  id (PK)            │──────────│  id (PK)                       │
+│  nombre             │          │  usuario_id (FK)               │
+│  email (UK)         │          │  fecha_simulacion              │
+│  capital_disponible │          │  capital_disponible            │
+└─────────────────────┘          │  ganancia_total                │
+                                 │  costo_total                   │
+                                 │  capital_restante              │
+                                 │  retorno_porcentaje            │
+                                 │  productos_seleccionados_json  │
+                                 │  mensaje                       │
+                                 └─────────────────────────────────┘
+
 ┌─────────────────────────────────┐
-│ PRODUCTO_FINANCIERO │
+│       PRODUCTO_FINANCIERO       │
 ├─────────────────────────────────┤
-│ id (PK) │
-│ nombre │
-│ descripcion │
-│ costo │
-│ porcentaje_retorno │
-│ activo │
+│  id (PK)                       │
+│  nombre                        │
+│  descripcion                   │
+│  costo                         │
+│  porcentaje_retorno            │
+│  activo                        │
 └─────────────────────────────────┘
-
-text
-
 ---
 
 ## Tecnologias Utilizadas
@@ -413,7 +417,7 @@ json
   }
 ]
 Relacion entre Componentes
-Flujo de una Simulacion
+## Flujo de una Simulacion
 Cliente envia POST /simulaciones
 
 SimulacionController recibe la peticion
@@ -442,7 +446,7 @@ Guarda en PostgreSQL usando SimulacionRepository
 
 Retorna respuesta al cliente
 
-Ciclo de Vida de la Simulacion
+## Ciclo de Vida de la Simulacion
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │                                                                     │
@@ -465,7 +469,47 @@ Ciclo de Vida de la Simulacion
 │   calculos realizados para auditoria y trazabilidad.              │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
+## DIAGRAMA DE SIMULACION 
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│  1. Cliente envia POST /simulaciones                                │
+│                        │                                            │
+│                        ▼                                            │
+│  2. SimulacionController recibe la peticion                        │
+│                        │                                            │
+│                        ▼                                            │
+│  3. SimulacionService valida el usuario                            │
+│     (llama a UsuarioService)                                       │
+│                        │                                            │
+│                        ▼                                            │
+│  4. SimulacionService ejecuta el algoritmo de optimizacion:        │
+│     ├── Filtra productos viables (precio <= capital)              │
+│     ├── Calcula ganancia por producto                              │
+│     ├── Aplica algoritmo de mochila                                │
+│     │   (selecciona combinacion optima)                           │
+│     └── Calcula metricas:                                          │
+│         - costo_total                                              │
+│         - ganancia_total                                           │
+│         - retorno                                                  │
+│         - eficiencia                                               │
+│                        │                                            │
+│                        ▼                                            │
+│  5. SimulacionService construye la respuesta                       │
+│     (SimulacionResponseDTO)                                        │
+│                        │                                            │
+│                        ▼                                            │
+│  6. SimulacionService persiste la simulacion:                      │
+│     ├── Crea entidad Simulacion                                   │
+│     ├── Convierte productos seleccionados a JSON                  │
+│     └── Guarda en PostgreSQL usando SimulacionRepository          │
+│                        │                                            │
+│                        ▼                                            │
+│  7. Retorna respuesta al cliente                                   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 Instalacion y Ejecucion
+
 Prerrequisitos
 Java 17 o superior
 
