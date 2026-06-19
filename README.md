@@ -52,6 +52,110 @@ Implementar un microservicio robusto que:
 
 ---
 
+
+## Tecnologias Utilizadas
+
+| Tecnologia | Version | Proposito |
+|------------|---------|-----------|
+| Java | 17 | Lenguaje de programacion |
+| Spring Boot | 4.1.0 | Framework principal |
+| Spring Data JPA | - | ORM para acceso a datos |
+| Spring Web | - | APIs RESTful |
+| Spring Validation | - | Validacion de datos |
+| PostgreSQL | 16 | Base de datos relacional |
+| Lombok | - | Reduccion de codigo boilerplate |
+| OpenAPI (Swagger) | 2.8.17 | Documentacion interactiva de API |
+| Maven | 3.9+ | Gestor de dependencias y build |
+| Docker | 24+ | Contenerizacion de la base de datos |
+| Docker Compose | 2+ | Orquestacion de contenedores |
+
+## Base de Datos
+
+### Configuracion con Docker Compose
+
+La base de datos PostgreSQL esta contenerizada para facilitar la ejecucion.
+
+**docker-compose.yml:**
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: andefin-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: andefin_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+Conexion a la Base de Datos
+application.properties:
+
+properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/andefin_db
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.show-sql=true
+server.port=8080
+
+## Estructura del Proyecto
+andefin/
+├── src/
+│ ├── main/
+│ │ ├── java/
+│ │ │ └── ec/
+│ │ │ └── edu/
+│ │ │ └── espe/
+│ │ │ └── andefin/
+│ │ │ ├── AndesFinApplication.java
+│ │ │ ├── controller/
+│ │ │ │ ├── UsuarioController.java
+│ │ │ │ ├── ProductoController.java
+│ │ │ │ └── SimulacionController.java
+│ │ │ ├── service/
+│ │ │ │ ├── UsuarioService.java
+│ │ │ │ ├── ProductoService.java
+│ │ │ │ └── SimulacionService.java
+│ │ │ ├── repository/
+│ │ │ │ ├── UsuarioRepository.java
+│ │ │ │ ├── ProductoRepository.java
+│ │ │ │ └── SimulacionRepository.java
+│ │ │ ├── entity/
+│ │ │ │ ├── Usuario.java
+│ │ │ │ ├── ProductoFinanciero.java
+│ │ │ │ └── Simulacion.java
+│ │ │ ├── dto/
+│ │ │ │ ├── UsuarioDTO.java
+│ │ │ │ ├── ProductoDTO.java
+│ │ │ │ ├── SimulacionRequestDTO.java
+│ │ │ │ └── SimulacionResponseDTO.java
+│ │ │ └── config/
+│ │ │ └── DataLoader.java
+│ │ └── resources/
+│ │ └── application.properties
+│ └── test/
+│ └── java/
+│ └── ec/
+│ └── edu/
+│ └── espe/
+│ └── andefin/
+│ └── AndesFinApplicationTests.java
+├── docker-compose.yml
+├── README.md
+└── pom.xml
+
+text
+
+
 ## Arquitectura del Sistema
 ┌─────────────────────────────────────────────────────────────────────┐
 │                                                                     │
@@ -156,113 +260,7 @@ Implementar un microservicio robusto que:
 │  activo                        │
 └─────────────────────────────────┘
 ---
-
-## Tecnologias Utilizadas
-
-| Tecnologia | Version | Proposito |
-|------------|---------|-----------|
-| Java | 17 | Lenguaje de programacion |
-| Spring Boot | 4.1.0 | Framework principal |
-| Spring Data JPA | - | ORM para acceso a datos |
-| Spring Web | - | APIs RESTful |
-| Spring Validation | - | Validacion de datos |
-| PostgreSQL | 16 | Base de datos relacional |
-| Lombok | - | Reduccion de codigo boilerplate |
-| OpenAPI (Swagger) | 2.8.17 | Documentacion interactiva de API |
-| Maven | 3.9+ | Gestor de dependencias y build |
-| Docker | 24+ | Contenerizacion de la base de datos |
-| Docker Compose | 2+ | Orquestacion de contenedores |
-
----
-
-## Estructura del Proyecto
-andefin/
-├── src/
-│ ├── main/
-│ │ ├── java/
-│ │ │ └── ec/
-│ │ │ └── edu/
-│ │ │ └── espe/
-│ │ │ └── andefin/
-│ │ │ ├── AndesFinApplication.java
-│ │ │ ├── controller/
-│ │ │ │ ├── UsuarioController.java
-│ │ │ │ ├── ProductoController.java
-│ │ │ │ └── SimulacionController.java
-│ │ │ ├── service/
-│ │ │ │ ├── UsuarioService.java
-│ │ │ │ ├── ProductoService.java
-│ │ │ │ └── SimulacionService.java
-│ │ │ ├── repository/
-│ │ │ │ ├── UsuarioRepository.java
-│ │ │ │ ├── ProductoRepository.java
-│ │ │ │ └── SimulacionRepository.java
-│ │ │ ├── entity/
-│ │ │ │ ├── Usuario.java
-│ │ │ │ ├── ProductoFinanciero.java
-│ │ │ │ └── Simulacion.java
-│ │ │ ├── dto/
-│ │ │ │ ├── UsuarioDTO.java
-│ │ │ │ ├── ProductoDTO.java
-│ │ │ │ ├── SimulacionRequestDTO.java
-│ │ │ │ └── SimulacionResponseDTO.java
-│ │ │ └── config/
-│ │ │ └── DataLoader.java
-│ │ └── resources/
-│ │ └── application.properties
-│ └── test/
-│ └── java/
-│ └── ec/
-│ └── edu/
-│ └── espe/
-│ └── andefin/
-│ └── AndesFinApplicationTests.java
-├── docker-compose.yml
-├── README.md
-└── pom.xml
-
-text
-
----
-
-## Base de Datos
-
-### Configuracion con Docker Compose
-
-La base de datos PostgreSQL esta contenerizada para facilitar la ejecucion.
-
-**docker-compose.yml:**
-```yaml
-version: '3.8'
-
-services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: andefin-db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: andefin_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-
-volumes:
-  postgres_data:
-Conexion a la Base de Datos
-application.properties:
-
-properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/andefin_db
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.show-sql=true
-server.port=8080
-Endpoints
+## Endpoints
 Resumen de Endpoints
 Metodo	Endpoint	Descripcion
 GET	/usuarios	Listar todos los usuarios registrados
@@ -416,35 +414,6 @@ json
     "mensaje": "Simulacion con ganancias minimas. Considere aumentar capital para mejores opciones."
   }
 ]
-Relacion entre Componentes
-## Flujo de una Simulacion
-Cliente envia POST /simulaciones
-
-SimulacionController recibe la peticion
-
-SimulacionService valida el usuario (llama a UsuarioService)
-
-SimulacionService ejecuta el algoritmo de optimizacion:
-
-Filtra productos viables (precio <= capital)
-
-Calcula ganancia por producto
-
-Aplica algoritmo de mochila (selecciona combinacion optima)
-
-Calcula metricas: costo total, ganancia total, retorno, eficiencia
-
-SimulacionService construye la respuesta (SimulacionResponseDTO)
-
-SimulacionService persiste la simulacion en la base de datos
-
-Crea entidad Simulacion
-
-Convierte productos seleccionados a JSON
-
-Guarda en PostgreSQL usando SimulacionRepository
-
-Retorna respuesta al cliente
 
 ## Ciclo de Vida de la Simulacion
 
