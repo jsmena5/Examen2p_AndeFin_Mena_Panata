@@ -11,7 +11,7 @@
 | Nombre | Correo | Rol |
 |--------|--------|-----|
 | James Steve Mena Pérez | jsmena@espe.edu.ec | Desarrollador Backend |
-| Kevin Panata | kspanata@espe.edu.ec | Desarrollador Backend |
+| Kevin Panata | kipanata@espe.edu.ec | Desarrollador Backend |
 
 ---
 
@@ -57,7 +57,7 @@ Implementar un microservicio robusto que:
 
 | Tecnologia | Version | Proposito |
 |------------|---------|-----------|
-| Java | 17 | Lenguaje de programacion |
+| Java | 21 | Lenguaje de programacion |
 | Spring Boot | 4.1.0 | Framework principal |
 | Spring Data JPA | - | ORM para acceso a datos |
 | Spring Web | - | APIs RESTful |
