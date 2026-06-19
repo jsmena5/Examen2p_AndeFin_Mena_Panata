@@ -57,7 +57,7 @@ Implementar un microservicio robusto que:
 
 | Tecnologia | Version | Proposito |
 |------------|---------|-----------|
-| Java | 17 | Lenguaje de programacion |
+| Java | 21 | Lenguaje de programacion |
 | Spring Boot | 4.1.0 | Framework principal |
 | Spring Data JPA | - | ORM para acceso a datos |
 | Spring Web | - | APIs RESTful |
