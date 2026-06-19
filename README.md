@@ -11,7 +11,7 @@
 | Nombre | Correo | Rol |
 |--------|--------|-----|
 | James Steve Mena Pérez | jsmena@espe.edu.ec | Desarrollador Backend |
-| Kevin Panata | kspanata@espe.edu.ec | Desarrollador Backend |
+| Kevin Panata | kipanata@espe.edu.ec | Desarrollador Backend |
 
 ---
 
